@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Track Location</title>
+</head>
+<body>
+  <h1>Location Tracker</h1>
+  <button onclick="getLocation()">Get Location</button>
+  <p id="demo"></p>
+
+  <script>
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        document.getElementById("demo").innerHTML = "Geolocation is not supported.";
+      }
+    }
+
+    function showPosition(position) {
+      document.getElementById("demo").innerHTML =
+      "Latitude: " + position.coords.latitude +
+      "<br>Longitude: " + position.coords.longitude;
+    }
+  </script>
+</body>
+</html>
