@@ -1,27 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar">
 <head>
-  <title>Track Location</title>
+  <meta charset="UTF-8" />
+  <title>صفحة تتبع</title>
 </head>
 <body>
-  <h1>Location Tracker</h1>
-  <button onclick="getLocation()">Get Location</button>
-  <p id="demo"></p>
+  <h1>مرحبا في صفحتي</h1>
+  <p>هذه صفحة اختبارية مع تتبع IP الزائر.</p>
 
   <script>
-    function getLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-      } else {
-        document.getElementById("demo").innerHTML = "Geolocation is not supported.";
-      }
-    }
-
-    function showPosition(position) {
-      document.getElementById("demo").innerHTML =
-      "Latitude: " + position.coords.latitude +
-      "<br>Longitude: " + position.coords.longitude;
-    }
+    // استدعاء API مجاني للحصول على IP الزائر
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        const visitorIP = data.ip;
+        // إرسال IP إلى webhook.site الخاص بك
+        fetch('https://webhook.site/de39dc52-95ab-4c25-aba0-e1738a10f980', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ip: visitorIP,
+            userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString()
+          })
+        });
+      });
   </script>
 </body>
 </html>
